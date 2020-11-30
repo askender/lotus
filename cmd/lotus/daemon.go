@@ -136,6 +136,14 @@ var DaemonCmd = &cli.Command{
 			Name:  "config",
 			Usage: "specify path of config file to use",
 		},
+		// FIXME: This is not the correct place to put this configuration
+		//  option. Ideally it would be part of `config.toml` but at the
+		//  moment that only applies to the node configuration and not outside
+		//  components like the RPC server.
+		&cli.IntFlag{
+			Name:  "api-max-req-size",
+			Usage: "maximum API request size accepted by the JSON RPC server",
+		},
 	},
 	Action: func(cctx *cli.Context) error {
 		isLite := cctx.Bool("lite")
@@ -321,7 +329,7 @@ var DaemonCmd = &cli.Command{
 		}
 
 		// TODO: properly parse api endpoint (or make it a URL)
-		return serveRPC(api, stop, endpoint, shutdownChan)
+		return serveRPC(api, stop, endpoint, shutdownChan, int64(cctx.Int("api-max-req-size")))
 	},
 	Subcommands: []*cli.Command{
 		daemonStopCmd,
@@ -358,7 +366,7 @@ func importKey(ctx context.Context, api api.FullNode, f string) error {
 		return err
 	}
 
-	log.Info("successfully imported key for %s", addr)
+	log.Infof("successfully imported key for %s", addr)
 	return nil
 }
 
@@ -410,14 +418,6 @@ func ImportChain(r repo.Repo, fname string, snapshot bool) (err error) {
 		return xerrors.Errorf("failed to open blockstore: %w", err)
 	}
 
-	defer func() {
-		if c, ok := bs.(io.Closer); ok {
-			if err := c.Close(); err != nil {
-				log.Warnf("failed to close blockstore: %s", err)
-			}
-		}
-	}()
-
 	mds, err := lr.Datastore("/metadata")
 	if err != nil {
 		return err
@@ -427,7 +427,9 @@ func ImportChain(r repo.Repo, fname string, snapshot bool) (err error) {
 	if err != nil {
 		return xerrors.Errorf("failed to open journal: %w", err)
 	}
+
 	cst := store.NewChainStore(bs, bs, mds, vm.Syscalls(ffiwrapper.ProofVerifier), j)
+	defer cst.Close() //nolint:errcheck
 
 	log.Infof("importing chain from %s...", fname)
 
@@ -472,7 +474,7 @@ func ImportChain(r repo.Repo, fname string, snapshot bool) (err error) {
 	}
 
 	log.Infof("accepting %s as new head", ts.Cids())
-	if err := cst.SetHead(ts); err != nil {
+	if err := cst.ForceHeadSilent(context.Background(), ts); err != nil {
 		return err
 	}
 

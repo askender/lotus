@@ -53,6 +53,9 @@
   * [NetBandwidthStats](#NetBandwidthStats)
   * [NetBandwidthStatsByPeer](#NetBandwidthStatsByPeer)
   * [NetBandwidthStatsByProtocol](#NetBandwidthStatsByProtocol)
+  * [NetBlockAdd](#NetBlockAdd)
+  * [NetBlockList](#NetBlockList)
+  * [NetBlockRemove](#NetBlockRemove)
   * [NetConnect](#NetConnect)
   * [NetConnectedness](#NetConnectedness)
   * [NetDisconnect](#NetDisconnect)
@@ -153,7 +156,7 @@ Response:
 ```json
 {
   "Version": "string value",
-  "APIVersion": 4352,
+  "APIVersion": 65536,
   "BlockDelay": 42
 }
 ```
@@ -549,7 +552,8 @@ Response:
     "Initiator": "12D3KooWGzxzKZYveHXtpG6AsrUJBcWxHBFS2HsEoGTxrMLvKXtf",
     "Responder": "12D3KooWGzxzKZYveHXtpG6AsrUJBcWxHBFS2HsEoGTxrMLvKXtf",
     "ID": 3
-  }
+  },
+  "SectorNumber": 9
 }
 ```
 
@@ -798,6 +802,58 @@ Response:
 }
 ```
 
+### NetBlockAdd
+
+
+Perms: admin
+
+Inputs:
+```json
+[
+  {
+    "Peers": null,
+    "IPAddrs": null,
+    "IPSubnets": null
+  }
+]
+```
+
+Response: `{}`
+
+### NetBlockList
+
+
+Perms: read
+
+Inputs: `null`
+
+Response:
+```json
+{
+  "Peers": null,
+  "IPAddrs": null,
+  "IPSubnets": null
+}
+```
+
+### NetBlockRemove
+
+
+Perms: admin
+
+Inputs:
+```json
+[
+  {
+    "Peers": null,
+    "IPAddrs": null,
+    "IPSubnets": null
+  }
+]
+```
+
+Response: `{}`
+
 ### NetConnect
 
 
@@ -987,7 +1043,10 @@ Inputs:
       "/": "bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4"
     }
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1008,7 +1067,10 @@ Inputs:
     },
     "ID": "07070707-0707-0707-0707-070707070707"
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1029,7 +1091,10 @@ Inputs:
     },
     "ID": "07070707-0707-0707-0707-070707070707"
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1050,7 +1115,10 @@ Inputs:
     },
     "ID": "07070707-0707-0707-0707-070707070707"
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1072,7 +1140,10 @@ Inputs:
     "ID": "07070707-0707-0707-0707-070707070707"
   },
   true,
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1093,7 +1164,10 @@ Inputs:
     },
     "ID": "07070707-0707-0707-0707-070707070707"
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1115,7 +1189,10 @@ Inputs:
     "ID": "07070707-0707-0707-0707-070707070707"
   },
   null,
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1137,7 +1214,10 @@ Inputs:
     "ID": "07070707-0707-0707-0707-070707070707"
   },
   null,
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1159,7 +1239,10 @@ Inputs:
     "ID": "07070707-0707-0707-0707-070707070707"
   },
   null,
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1188,7 +1271,10 @@ Inputs:
       "/": "bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4"
     }
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1209,7 +1295,10 @@ Inputs:
     },
     "ID": "07070707-0707-0707-0707-070707070707"
   },
-  "string value"
+  {
+    "Code": 0,
+    "Message": "string value"
+  }
 ]
 ```
 
@@ -1422,7 +1511,7 @@ Response:
   "ToUpgrade": true,
   "LastErr": "string value",
   "Log": null,
-  "SealProof": 3,
+  "SealProof": 8,
   "Activation": 10101,
   "Expiration": 10101,
   "DealWeight": "0",
